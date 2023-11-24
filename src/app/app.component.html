@@ -10,10 +10,29 @@
 </div>
 
 <div class="content" role="main">
-
+  <div *ngIf="!loading" class="action">
+    <div>
+      <button class="button button5" (click)="fileinput.click()">UPLOAD</button>
+      <input type="file" name="xml_file" (change)="loadFileToEditor($event)" #fileinput hidden accept="text/xml" >
+    </div>
+    <div class="action-button-box">
+      <div>
+        <button *ngIf="!!xml" (click)="transform()" class="button button5">TRANSFORM</button>
+      </div>
+      <div>
+        <button *ngIf="!!prism" (click)="save()" class="button button5">SAVE</button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!!loading" class="loading-bar" ></div>
   <div class="code-editor">
-    <div #xmlEditor class="editor" ></div>
-    <div #prismEditor class="editor" ></div>
+    <div class="editor-box">
+      <div #xmlEditor class="editor"></div>
+    </div>
+    <div class="editor-box">
+      <div *ngIf="!!error_message" class="error-message-box"><div class="error-message">{{error_message}}</div></div>
+      <div #prismEditor  class="editor"></div>
+    </div>
   </div>
 
 
