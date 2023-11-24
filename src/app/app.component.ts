@@ -22,6 +22,7 @@ export class AppComponent implements AfterViewInit{
   xml: string = '';
   error_message: string = '';
   loading: boolean = true;
+  show_new: boolean = false;
   xmlCodeEditor: EditorView | undefined;
   prism: string = '';
   prismCodeEditor: EditorView | undefined;
@@ -35,6 +36,7 @@ export class AppComponent implements AfterViewInit{
         this.xml = response.xml;
         this.prism = response.prism;
         this.loading = false;
+        this.show_new = true;
         this.registerXMLEditor();
         this.registerPRISMEditor();
       });
@@ -42,10 +44,44 @@ export class AppComponent implements AfterViewInit{
       this.appService.getNewUUID().subscribe((response: any) => {
         this.uuid = response.uuid;
         this.loading = false;
+        this.show_new = false;
+        this.xml = '';
+        this.prism = '';
         this.registerXMLEditor();
         this.registerPRISMEditor();
       });
     }
+  }
+
+  newEditor(){
+    this.route.navigate([`/`]);
+    this.appService.getNewUUID().subscribe((response: any) => {
+      this.uuid = response.uuid;
+      this.loading = false;
+      this.show_new = false;
+      this.xml = '';
+      this.prism = '';
+      if (this.xmlCodeEditor) {
+        const state = this.xmlCodeEditor.state.update({
+          changes: {
+            from: 0,
+            to: this.xmlCodeEditor.state.doc.length,
+            insert: ''
+          }
+        });
+        this.xmlCodeEditor.update([state]);
+      }
+      if (this.prismCodeEditor) {
+        const state = this.prismCodeEditor.state.update({
+          changes: {
+            from: 0,
+            to: this.prismCodeEditor.state.doc.length,
+            insert: ''
+          }
+        });
+        this.prismCodeEditor.update([state]);
+      }
+    });
   }
 
   registerXMLEditor() {
@@ -109,6 +145,7 @@ export class AppComponent implements AfterViewInit{
     this.appService.transform(this.uuid,this.xml).subscribe((response: any) => {
       this.loading = false;
       this.route.navigate([`/${this.uuid}`]);
+      this.show_new = true;
       if(response.success){
         this.toastService.success('Transform Success');
         this.prism = response.result;
@@ -136,6 +173,7 @@ export class AppComponent implements AfterViewInit{
       if(response.success){
         this.toastService.success('Save Success');
         this.route.navigate([`/${this.uuid}`]);  
+        this.show_new = true;
       }
       else{
         this.error_message = response.error;

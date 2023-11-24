@@ -12,6 +12,7 @@
 <div class="content" role="main">
   <div *ngIf="!loading" class="action">
     <div>
+      <button *ngIf="show_new" class="button button5" (click)="newEditor()">NEW</button>
       <button class="button button5" (click)="fileinput.click()">UPLOAD</button>
       <input type="file" name="xml_file" (change)="loadFileToEditor($event)" #fileinput hidden accept="text/xml" >
     </div>
